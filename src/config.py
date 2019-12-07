@@ -9,11 +9,11 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 DB_CONTAINER = os.getenv("APPLICATION_DB_CONTAINER", "db")
 POSTGRES = {
-    "user": os.getenv("APPLICATION_POSTGRES_USER", "postgres"),
-    "pw": os.getenv("APPLICATION_POSTGRES_PW", ""),
-    "host": os.getenv("APPLICATION_POSTGRES_HOST", DB_CONTAINER),
+    "user": os.getenv("APPLICATION_POSTGRES_USER", "uadqvrzvvhsgvl"),
+    "pw": os.getenv("APPLICATION_POSTGRES_PW", "76e9e53176d897f8bb1290fec47bcdde69043710aecb602067de96961e1c7bc0"),
+    "host": os.getenv("APPLICATION_POSTGRES_HOST", "ec2-107-21-126-201.compute-1.amazonaws.com"),
     "port": os.getenv("APPLICATION_POSTGRES_PORT", 5432),
-    "db": os.getenv("APPLICATION_POSTGRES_DB", "postgres"),
+    "db": os.getenv("APPLICATION_POSTGRES_DB", "d7d2gs1qbqj579"),
 }
 DB_URI = "postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s" % POSTGRES
 

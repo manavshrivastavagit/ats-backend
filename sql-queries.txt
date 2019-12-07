@@ -1,0 +1,98 @@
+create table hr
+(
+  id                  serial not null,
+  email               varchar(100),
+  name                varchar(100),
+  password            varchar(200),
+  alt_email           varchar(100),
+  alt_phone_no        varchar(15),
+  phone_no            varchar(15),
+  department          varchar(100),
+  designation         varchar(100),
+  profile_picture_url varchar(100),
+  created_date        timestamp,
+  last_updated_date   timestamp
+);
+
+alter table hr
+  owner to uadqvrzvvhsgvl;
+
+
+CREATE TABLE public.candidates
+(
+    id bigserial,
+    name varchar(100),
+    email varchar(100),
+    alt_email varchar(100),
+    phone_no varchar(15),
+    alt_phone_no varchar(15),
+    department varchar(100),
+    designation varchar(100),
+    notice_period varchar(100),
+    ctc varchar(100),
+    exp_ctc varchar(100),
+    created_date timestamp,
+    last_updated_date timestamp,
+    resume_url varchar(200),
+    github_url varchar(200),
+    linkedin_url varchar(200),
+    current_address varchar(200),
+    notes varchar(500),
+    last_updated_by_hr_id bigint,
+    status varchar(100)
+);
+
+CREATE TABLE public.interviewers
+(
+    id bigserial,
+    name varchar(100),
+    email varchar(100),
+    alt_email varchar(100),
+    phone_no varchar(15),
+    alt_phone_no varchar(15),
+    password varchar(200),
+    department varchar(100),
+    designation varchar(100),
+    created_date timestamp,
+    last_updated_date timestamp,
+    last_updated_by_hr_id bigint,
+    last_updated_by_interviewer_id bigint,
+    profile_picture_url varchar(200)
+);
+
+CREATE TABLE public.interviews
+(
+    id bigserial,
+    candidate_id bigint,
+    hr_id bigint,
+    interviewer_id bigint,
+    created_date timestamp,
+    last_updated_date timestamp,
+    last_updated_by_hr_id bigint,
+    last_updated_by_interviewer_id bigint
+);
+
+CREATE TABLE public.interview_rounds
+(
+    id bigint,
+    interview_id bigint,
+    interviewer_id bigint,
+    topic varchar(200),
+    ratings varchar(100),
+    feedback varchar(100),
+    status varchar(100),
+    round_no int,
+    round_name varchar(100),
+    created_date timestamp,
+    last_updated_date timestamp,
+    last_updated_by_hr_id bigint,
+    last_updated_by_interviewer_id bigint
+);
+
+
+CREATE TABLE public."user"
+(
+    first_name varchar(100),
+    last_name varchar(100),
+    age varchar(100)
+);
