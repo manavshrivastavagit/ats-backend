@@ -7,6 +7,11 @@ from flask_restful import Api
 from resources import HRResource, HRResourceWithArg
 
 HR_BLUEPRINT = Blueprint("hr", __name__)
+
+# Api(HR_BLUEPRINT).add_resource(
+#     HRResource, "/"
+# )
+
 Api(HR_BLUEPRINT).add_resource(
     HRResource, "/v1/hr"
 )

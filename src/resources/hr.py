@@ -11,7 +11,7 @@ from repositories import HRRepository
 from util import parse_params
 
 # logger
-from server import server
+# from server import server
 import json
 from flask import make_response
 
@@ -82,7 +82,7 @@ class HRResource(Resource):
             created_date=created_date,
             last_updated_date=last_updated_date
         )
-        server.logger.info(jsonify(hr.json))
+        # server.logger.info(jsonify(hr.json))
         res = jsonify({"data": hr.json, "status": "success"})
         return make_response(res, 200)
 
