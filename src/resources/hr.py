@@ -4,7 +4,7 @@ Define the REST verbs relative to the hr
 
 from flasgger import swag_from
 from flask.json import jsonify
-from flask_restful import Resource
+from flask_restful import Resource, request
 from flask_restful.reqparse import Argument
 
 from repositories import HRRepository
@@ -29,6 +29,27 @@ class HRResource(Resource):
         repository = HRRepository()
         hr = repository.delete(id=id)
         return jsonify(hr)
+
+
+    @staticmethod
+    @swag_from("../swagger/hr/GET.yml")
+    def get():
+        """ Return an hr key information based on his name """
+        args = request.args
+        #  server.logger.info(json.dumps(hr))
+        # server.logger.info(hr)
+        try:
+            id = args['id']
+            if id == "all":
+                hr = HRRepository.getAllIds()
+                res = jsonify({"data": hr.all(), "status": "success"}) 
+            else:
+                 hr = HRRepository.getById(id=id)
+            res = jsonify({"data": hr.json, "status": "success"}) 
+        except:
+            res = jsonify(hr)
+        return make_response(res, 200)
+
 
     @staticmethod
     @parse_params(
