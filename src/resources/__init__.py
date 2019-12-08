@@ -1,2 +1,2 @@
 from .user import UserResource
-from .hr import HRResource
+from .hr import HRResourceWithArg, HRResource

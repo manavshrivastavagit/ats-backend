@@ -8,16 +8,9 @@ parameters:
     schema:
       type: object
       properties:
-        # age:
-        #   type: integer
-        #   description: The age of the hr
-        first_name:
-          type: string
-          description: the last name of the hr
-        last_name:
-          type: string
-          description: the last name of the hr
-
+        id:
+          type: integer
+          description: The id of the hr
 responses:
   200:
     description: The hr was successfully created
@@ -26,4 +19,4 @@ responses:
         hr:
           last_name: Doe
           first_name: John
-          # age: 30
+          id: 30

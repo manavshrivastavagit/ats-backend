@@ -31,8 +31,9 @@ class HR(db.Model, BaseModel, metaclass=MetaBaseModel):
     # age = db.Column(db.Integer, nullable=True)
 
     def __init__(self,
-     first_name,
-     last_name,
+     id=None,
+     first_name=None,
+     last_name=None,
      email=None,
      password=None,
      alt_email=None,
@@ -49,6 +50,7 @@ class HR(db.Model, BaseModel, metaclass=MetaBaseModel):
      address=None
      ):
         """ Create a new HR """
+        self.id = id
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
