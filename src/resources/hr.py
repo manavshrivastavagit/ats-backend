@@ -42,7 +42,7 @@ class HRResource(Resource):
             id = args['id']
             if id == "all":
                 hr = HRRepository.getAllIds()
-                res = jsonify({"data": hr.all(), "status": "success"}) 
+                return jsonify(hr)
             else:
                  hr = HRRepository.getById(id=id)
             res = jsonify({"data": hr.json, "status": "success"}) 

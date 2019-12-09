@@ -4,6 +4,9 @@ from models import HR
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask.json import jsonify
 from models import db
+# logger
+# from server import server
+import json
 
 
 class HRRepository:
@@ -45,9 +48,26 @@ class HRRepository:
     def getAllIds():
         """ Query a HR by last and first name """
         try:
-            return HR.query.paginate(1,10,error_out=False)
-        except:
-            # logger.error("{} has multiple records in Marcotti database for: {}".format(model.__name__, conditions))
+            record_query = HR.query.paginate(1,10,error_out=False)
+            record_query_dicts = []
+            for i in record_query.items: 
+                record_query_dict = i.__dict__
+                del record_query_dict['_sa_instance_state']
+                record_query_dicts.append(record_query_dict)
+            record_query.items = record_query_dicts
+            # server.logger.info(record_query.total)
+            return dict(
+            status = "success",
+            total = record_query.total,
+            per_page=record_query.per_page,
+            current_page=record_query.page,
+            next_num=record_query.next_num,
+            prev_num=record_query.prev_num,
+            data=record_query.items,
+            has_next=record_query.has_next)
+        except Exception as e:
+            # server.logger.info('error : '+ str(e))
+            # server.logger.info(e)
             return {
                 "status": "error",
                 "data": [],
