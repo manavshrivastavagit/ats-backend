@@ -21,7 +21,7 @@ class HRResource(Resource):
 
     @staticmethod
     @parse_params(
-        Argument("id", location="json", required=True, help="Require id of the hr.")
+        Argument("id", location="args", required=True, help="Require id of the hr.")
     )
     @swag_from("../swagger/hr/DELETE.yml")
     def delete(id):
@@ -112,9 +112,6 @@ class HRResource(Resource):
         res = jsonify({"data": hr.json, "status": "success"})
         return make_response(res, 200)
 
-class HRResourceWithArg(Resource):
-    """ Verbs relative to the hr """
-
     @staticmethod
     @swag_from("../swagger/hr/GET.yml")
     def get(last_name, first_name):
@@ -128,27 +125,68 @@ class HRResourceWithArg(Resource):
             res = jsonify({"hr": hr}) 
         return make_response(res, 200)
 
-   
 
     @staticmethod
     @parse_params(
-        Argument("first_name", location="json", required=True, help="Require first_name of the hr."),
-        Argument("last_name", location="json", required=True, help="Require last_name of the hr.")
+        Argument("id", location="json", required=True, help="Require id of the hr."),
+        Argument("first_name", location="json",  help="The first_name of the hr."),
+        Argument("last_name", location="json",  help="The last_name of the hr."),
+        Argument("email", location="json",  help="The email of the hr."),
+        Argument("password", location="json",   help="The password of the hr."),
+        Argument("phone_no", location="json",  help="The phone_no of the hr."),
+        Argument("alt_email", location="json",  help="The alt_email of the hr."),
+        Argument("alt_phone_no", location="json",  help="The alt_phone_no of the hr."),
+        Argument("department", location="json",  help="The department of the hr."),
+        Argument("designation", location="json",  help="The designation of the hr."),
+        Argument("profile_picture_url", location="json",  help="The profile_picture_url of the hr."),
+        Argument("country", location="json",  help="The country of the hr."),
+        Argument("state", location="json",  help="The state of the hr."),
+        Argument("city", location="json",  help="The city of the hr."),
+        Argument("address", location="json",  help="The address of the hr."),
+        Argument("created_date", location="json",  help="The created_date of the hr."),
+        Argument("last_updated_date", location="json",  help="The last_updated_date of the hr.")
     )
     @swag_from("../swagger/hr/PUT.yml")
-    def put(last_name, first_name):
+    def put(id, last_name,first_name, 
+            email,
+            password,
+            alt_email,
+            alt_phone_no,
+            phone_no,
+            department,
+            designation,
+            profile_picture_url,
+            country,
+            state,
+            city,
+            address,
+            created_date,
+            last_updated_date):
         """ Update an hr based on the sent information """
         repository = HRRepository()
-        hr = repository.update(last_name=last_name, first_name=first_name)
-        return jsonify({"hr": hr.json})
+        hr = repository.update(
+            id=id,
+            last_name=last_name,
+            first_name=first_name,
+            email=email,
+            password=password,
+            alt_email=alt_email,
+            alt_phone_no=alt_phone_no,
+            phone_no=phone_no,
+            department=department,
+            designation=designation,
+            profile_picture_url=profile_picture_url,
+            country=country,
+            state=state,
+            city=city,
+            address=address,
+            created_date=created_date,
+            last_updated_date=last_updated_date)
+        try:
+            res = jsonify({"data": hr.json, "status": "success"}) 
+        except:
+            res = jsonify({"hr": hr}) 
+        return make_response(res, 200)
 
-    @staticmethod
-    @parse_params(
-        Argument("id", location="json", required=True, help="Require id of the hr.")
-    )
-    @swag_from("../swagger/hr/DELETE.yml")
-    def delete(id):
-        """ delete an hr based on the sent information """
-        repository = HRRepository()
-        hr = repository.delete(id=id)
-        return jsonify({"hr": hr.json})
+class HRResourceWithArg(Resource):
+    """ Verbs relative to the hr """

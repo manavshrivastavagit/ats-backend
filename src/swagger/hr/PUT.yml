@@ -3,25 +3,20 @@ Update an hr based on the sent information
 tags:
   - hr
 parameters:
-  - name: last_name
-    in: path
-    type: string
-    description: the last name of the hr
-  - name: first_name
-    in: path
-    type: string
-    description: the last name of the hr
   - name: body
     in: body
     schema:
       type: object
       properties:
-        # age:
-        #   type: integer
-        #   description: The age of the hr
+        id:
+          type: integer
+          description: The id of the hr
+        first_name:
+          type: string
+          description: The first_name of the hr
 responses:
   200:
-    description: The hr was successfully created
+    description: The hr was successfully updated
     schema:
       example:
         hr:

@@ -3,6 +3,10 @@ Create an hr based on the sent information
 tags:
   - hr
 parameters:
+  - name: id
+    in: query
+    type: string
+    description: id
   - name: body
     in: body
     schema:
@@ -13,7 +17,7 @@ parameters:
           description: The id of the hr
 responses:
   200:
-    description: The hr was successfully created
+    description: The hr was successfully deleted
     schema:
       example:
         hr:

@@ -50,23 +50,23 @@ class HRRepository:
         try:
             # server.logger.info(page_number)
             # server.logger.info(per_page_data)
-            record_query = HR.query.paginate(int(page_number),int(per_page_data),error_out=False)
+            record_query = HR.query.paginate(int(page_number), int(per_page_data), error_out=False)
             record_query_dicts = []
-            for i in record_query.items: 
+            for i in record_query.items:
                 record_query_dict = i.__dict__
                 del record_query_dict['_sa_instance_state']
                 record_query_dicts.append(record_query_dict)
             record_query.items = record_query_dicts
             # server.logger.info(record_query.total)
             return dict(
-            status = "success",
-            total = record_query.total,
-            per_page=record_query.per_page,
-            current_page=record_query.page,
-            next_num=record_query.next_num,
-            prev_num=record_query.prev_num,
-            data=record_query.items,
-            has_next=record_query.has_next)
+                status="success",
+                total=record_query.total,
+                per_page=record_query.per_page,
+                current_page=record_query.page,
+                next_num=record_query.next_num,
+                prev_num=record_query.prev_num,
+                data=record_query.items,
+                has_next=record_query.has_next)
         except Exception as e:
             # server.logger.info('error : '+ str(e))
             # server.logger.info(e)
@@ -74,27 +74,54 @@ class HRRepository:
                 "status": "error",
                 "data": [],
                 "message": "No Results Found"
-            }        
+            }
 
-    def update(self, last_name, first_name,
-            email,
-            password,
-            alt_email,
-            alt_phone_no,
-            phone_no,
-            department,
-            designation,
-            profile_picture_url,
-            country,
-            state,
-            city,
-            address,
-            created_date,
-            last_updated_date):
-        """ Update a HR's age """
-        HR = self.get(last_name, first_name)
-        # HR.age = age
-
+    def update(self, id, last_name, first_name,
+               email,
+               password,
+               alt_email,
+               alt_phone_no,
+               phone_no,
+               department,
+               designation,
+               profile_picture_url,
+               country,
+               state,
+               city,
+               address,
+               created_date,
+               last_updated_date):
+        """ Update a HR """
+        HR = self.getById(id=id)
+        # HR.city = city if city else "bangalore"
+        if last_name is not None:
+            HR.last_name = last_name
+        if first_name is not None:
+            HR.first_name = first_name
+        if email is not None:
+                HR.email = email
+        if password is not None:
+            HR.password = password
+        if alt_email is not None:
+            HR.alt_email = alt_email
+        if alt_phone_no is not None:
+            HR.alt_phone_no = alt_phone_no
+        if phone_no is not None:
+            HR.phone_no = phone_no
+        if department is not None:
+            HR.department = department
+        if designation is not None:
+            HR.designation = designation
+        if profile_picture_url is not None:
+            HR.profile_picture_url = profile_picture_url
+        if country is not None:
+            HR.country = country
+        if state is not None:
+            HR.state = state
+        if city is not None:
+            HR.city = city
+        if address is not None:
+            HR.address = address
         return HR.save()
 
     @staticmethod
@@ -105,48 +132,48 @@ class HRRepository:
             db.session.delete(del_id)
             db.session.commit()
             return {
-                    "status": "success",
-                    "data": [],
-                    "message": "id deleted Successfully "
-                }
+                "status": "success",
+                "data": [],
+                "message": "id deleted Successfully "
+            }
         except:
             return {
-                    "status": "error",
-                    "data": [],
-                    "message": " id not found"
-                }
+                "status": "error",
+                "data": [],
+                "message": " id not found"
+            }
 
     @staticmethod
     def create(last_name, first_name,
-            email,
-            password,
-            alt_email,
-            alt_phone_no,
-            phone_no,
-            department,
-            designation,
-            profile_picture_url,
-            country,
-            state,
-            city,
-            address,
-            created_date,
-            last_updated_date):
+               email,
+               password,
+               alt_email,
+               alt_phone_no,
+               phone_no,
+               department,
+               designation,
+               profile_picture_url,
+               country,
+               state,
+               city,
+               address,
+               created_date,
+               last_updated_date):
         """ Create a new HR """
         newHR = HR(last_name=last_name, first_name=first_name,
-            email=email,
-            password=password,
-            alt_email=alt_email,
-            alt_phone_no=alt_phone_no,
-            phone_no=phone_no,
-            department=department,
-            designation=designation,
-            profile_picture_url=profile_picture_url,
-            country=country,
-            state=state,
-            city=city,
-            address=address,
-            created_date=created_date,
-            last_updated_date=last_updated_date)
+                   email=email,
+                   password=password,
+                   alt_email=alt_email,
+                   alt_phone_no=alt_phone_no,
+                   phone_no=phone_no,
+                   department=department,
+                   designation=designation,
+                   profile_picture_url=profile_picture_url,
+                   country=country,
+                   state=state,
+                   city=city,
+                   address=address,
+                   created_date=created_date,
+                   last_updated_date=last_updated_date)
 
         return newHR.save()
