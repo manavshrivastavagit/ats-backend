@@ -32,16 +32,21 @@ class HRResource(Resource):
 
 
     @staticmethod
+    @parse_params(
+        Argument("page_number", location="args",  help="Require page_number."),
+        Argument("per_page_data", location="args",  help="Require per_page_data.")
+    )
     @swag_from("../swagger/hr/GET.yml")
-    def get():
+    def get(page_number, per_page_data):
         """ Return an hr key information based on his name """
         args = request.args
         #  server.logger.info(json.dumps(hr))
-        # server.logger.info(hr)
+        # server.logger.info("page_number")
+        # server.logger.info(page_number)
         try:
             id = args['id']
             if id == "all":
-                hr = HRRepository.getAllIds()
+                hr = HRRepository.getAllIds(page_number, per_page_data)
                 return jsonify(hr)
             else:
                  hr = HRRepository.getById(id=id)

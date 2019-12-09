@@ -45,10 +45,12 @@ class HRRepository:
             }
 
     @staticmethod
-    def getAllIds():
+    def getAllIds(page_number=1, per_page_data=10):
         """ Query a HR by last and first name """
         try:
-            record_query = HR.query.paginate(1,10,error_out=False)
+            # server.logger.info(page_number)
+            # server.logger.info(per_page_data)
+            record_query = HR.query.paginate(int(page_number),int(per_page_data),error_out=False)
             record_query_dicts = []
             for i in record_query.items: 
                 record_query_dict = i.__dict__
