@@ -112,18 +112,7 @@ class HRResource(Resource):
         res = jsonify({"data": hr.json, "status": "success"})
         return make_response(res, 200)
 
-    @staticmethod
-    @swag_from("../swagger/hr/GET.yml")
-    def get(last_name, first_name):
-        """ Return an hr key information based on his name """
-        hr = HRRepository.get(last_name=last_name, first_name=first_name)
-        #  server.logger.info(json.dumps(hr))
-        # server.logger.info(hr)
-        try:
-            res = jsonify({"data": hr.json, "status": "success"}) 
-        except:
-            res = jsonify({"hr": hr}) 
-        return make_response(res, 200)
+   
 
 
     @staticmethod
@@ -190,3 +179,15 @@ class HRResource(Resource):
 
 class HRResourceWithArg(Resource):
     """ Verbs relative to the hr """
+    @staticmethod
+    @swag_from("../swagger/hr/GET.yml")
+    def get(last_name, first_name):
+        """ Return an hr key information based on his name """
+        hr = HRRepository.get(last_name=last_name, first_name=first_name)
+        #  server.logger.info(json.dumps(hr))
+        # server.logger.info(hr)
+        try:
+            res = jsonify({"data": hr.json, "status": "success"}) 
+        except:
+            res = jsonify({"hr": hr}) 
+        return make_response(res, 200)
