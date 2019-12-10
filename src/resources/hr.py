@@ -45,10 +45,17 @@ class HRResource(Resource):
         """ Return an hr key information based on his name """
         args = request.args
         headers =  request.headers
-        if request.headers.get('Authorization'):
+        # if request.headers.get('Authorization'):
             # server.logger.info(headers.get('Authorization') )
-            res = jsonify({"data": [], "status": "error", "message":"Invalid session token"})
-            return make_response(res, 401)
+            # server.logger.info(JWT.decode(headers.get('Authorization').split()[1]) )
+            # server.logger.info(JWT.is_valid(headers.get('Authorization')) )
+            # try:
+            #     encoded_token = JWT.decode(headers.get('Authorization').split()[1])
+            #     res = jsonify({"data": {"logout":"true","valid_session_token":"true"}, "status": "success"})
+            #     return make_response(res, 200)
+            # except:
+            #     res = jsonify({"data": [], "status": "error", "message":"Invalid session token"})
+            #     return make_response(res, 401)
         # server.logger.info("headers")
         # server.logger.info(page_number)
         try:
