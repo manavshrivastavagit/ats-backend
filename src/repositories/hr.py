@@ -32,6 +32,26 @@ class HRRepository:
             }
 
     @staticmethod
+    def getByEmail(email):
+        """ Query a HR by email """
+        try:
+            return HR.query.filter_by(email=email).one()
+        except NoResultFound:
+            return None
+            return {
+                "status": "error",
+                "data": [],
+                "message": "no data found"
+            }
+        except MultipleResultsFound:
+            return None
+            return {
+                "status": "error",
+                "data": [],
+                "message": "Multiple Results Found"
+            }
+
+    @staticmethod
     def getById(id):
         """ Query a HR by last and first name """
         try:

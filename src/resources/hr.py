@@ -14,6 +14,10 @@ from util import parse_params
 # from server import server
 import json
 from flask import make_response
+from util.bcrypt import Bcrypt
+from util.jwt import JWT
+import time
+
 
 
 class HRResource(Resource):
@@ -40,8 +44,12 @@ class HRResource(Resource):
     def get(page_number, per_page_data):
         """ Return an hr key information based on his name """
         args = request.args
-        #  server.logger.info(json.dumps(hr))
-        # server.logger.info("page_number")
+        headers =  request.headers
+        if request.headers.get('Authorization'):
+            # server.logger.info(headers.get('Authorization') )
+            res = jsonify({"data": [], "status": "error", "message":"Invalid session token"})
+            return make_response(res, 401)
+        # server.logger.info("headers")
         # server.logger.info(page_number)
         try:
             id = args['id']
@@ -91,10 +99,12 @@ class HRResource(Resource):
      city,
      address):
         """ Create an hr based on the sent information """
+        # hash password
+        password_hashed = Bcrypt.get_hashed_password(password)
         hr = HRRepository.create(
             last_name=last_name, first_name=first_name,
             email=email,
-            password=password,
+            password=password_hashed,
             alt_email=alt_email,
             alt_phone_no=alt_phone_no,
             phone_no=phone_no,
@@ -152,6 +162,9 @@ class HRResource(Resource):
             created_date,
             last_updated_date):
         """ Update an hr based on the sent information """
+         # hash password
+        if password is not None:
+            password = Bcrypt.get_hashed_password(password)
         repository = HRRepository()
         hr = repository.update(
             id=id,
@@ -191,3 +204,65 @@ class HRResourceWithArg(Resource):
         except:
             res = jsonify({"hr": hr}) 
         return make_response(res, 200)
+
+class HRResourceLogin(Resource):
+    """ Verbs relative to the hr login """
+    # login 
+    @staticmethod
+    @parse_params(
+        Argument("email", location="json", required=True, help="Require  email of the hr."),
+        Argument("password", location="json",  required=True, help="Require password of the hr."),
+    )
+    @swag_from("../swagger/hr/POST.yml")
+    def post( 
+        email,
+        password):
+        """ create session token """
+        # server.logger.info("login")
+       
+        
+        hr = HRRepository.getByEmail(
+            email=email
+        )
+        # server.logger.info(hr)
+        if hr is not None:
+            # hash password
+            password_hashed = Bcrypt.get_hashed_password(password)
+            valid_password = Bcrypt.check_password(password,hr.password)
+            # server.logger.info(valid_password)
+            if valid_password:
+                payload = {"email":hr.email, "createdAt":int(time.time() * 1000)}
+                session_token = JWT.encode(payload)
+                session_token = str(session_token)[1:].replace("'","")
+                # server.logger.info(session_token)
+                res = jsonify({"data": {"session_token":str(session_token)}, "status": "success"})
+                return make_response(res, 200)
+            else:
+                res = jsonify({"data": [], "status": "error", "message":"incorrect password"})
+                return make_response(res, 401)
+        else:
+            res = jsonify({"data": [], "status": "error", "message":"incorrect email"})
+            return make_response(res, 401)
+
+class HRResourceLogout(Resource):
+    """ Verbs relative to the hr logout """
+    # logout
+    @staticmethod
+    @swag_from("../swagger/hr/POST.yml")
+    def post():
+        """ Destroy session token """
+        # server.logger.info("logout")
+        headers =  request.headers
+        if request.headers.get('Authorization'):
+            # server.logger.info(headers.get('Authorization') )
+            # server.logger.info(JWT.decode(headers.get('Authorization').split()[1]) )
+            try:
+                encoded_token = JWT.decode(headers.get('Authorization').split()[1])
+                res = jsonify({"data": {"logout":"true","valid_session_token":"true"}, "status": "success"})
+                return make_response(res, 200)
+            except:
+                res = jsonify({"data": [], "status": "error", "message":"Invalid session token"})
+                return make_response(res, 401)
+        else:
+            res = jsonify({"data": [], "status": "error", "message":"No Authorization session token"})
+            return make_response(res, 401)

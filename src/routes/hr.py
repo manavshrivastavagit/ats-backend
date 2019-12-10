@@ -4,7 +4,7 @@ Defines the blueprint for the hr
 from flask import Blueprint
 from flask_restful import Api
 
-from resources import HRResource, HRResourceWithArg
+from resources import HRResource, HRResourceWithArg, HRResourceLogin,HRResourceLogout
 
 HR_BLUEPRINT = Blueprint("hr", __name__)
 
@@ -14,6 +14,14 @@ HR_BLUEPRINT = Blueprint("hr", __name__)
 
 Api(HR_BLUEPRINT).add_resource(
     HRResource, "/v1/hr"
+)
+
+Api(HR_BLUEPRINT).add_resource(
+    HRResourceLogin, "/v1/hr/login"
+)
+
+Api(HR_BLUEPRINT).add_resource(
+    HRResourceLogout, "/v1/hr/logout"
 )
 
 Api(HR_BLUEPRINT).add_resource(
