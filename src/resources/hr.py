@@ -11,7 +11,7 @@ from repositories import HRRepository
 from util import parse_params
 
 # logger
-from server import server
+# from server import server
 import json
 from flask import make_response
 from util.bcrypt import Bcrypt
