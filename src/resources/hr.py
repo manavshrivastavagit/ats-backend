@@ -11,13 +11,15 @@ from repositories import HRRepository
 from util import parse_params
 
 # logger
-# from server import server
+from server import server
 import json
 from flask import make_response
 from util.bcrypt import Bcrypt
 from util.jwt import JWT
 import time
-
+import werkzeug
+import os
+from werkzeug import secure_filename
 
 
 class HRResource(Resource):
@@ -30,82 +32,100 @@ class HRResource(Resource):
     @swag_from("../swagger/hr/DELETE.yml")
     def delete(id):
         """ delete an hr based on the sent information """
+        # checking session token
+        headers = request.headers
+        if request.headers.get('Authorization') is None:
+            res = jsonify({"data": [], "status": "error", "message": "Require session token"})
+            return make_response(res, 401)
+        if JWT.is_valid(headers.get('Authorization')) is False:
+            res = jsonify({"data": [], "status": "error", "message": "Invalid session token"})
+            return make_response(res, 401)
+        # checking session token ends
         repository = HRRepository()
         hr = repository.delete(id=id)
-        return jsonify(hr)
-
+        if hr.get('status') == "error":
+            res = jsonify(hr)
+            return make_response(res, 404)
+        else:
+            return jsonify(hr)
 
     @staticmethod
     @parse_params(
-        Argument("page_number", location="args",  help="Require page_number."),
-        Argument("per_page_data", location="args",  help="Require per_page_data.")
+        Argument("page_number", location="args", help="Require page_number."),
+        Argument("per_page_data", location="args", help="Require per_page_data.")
     )
     @swag_from("../swagger/hr/GET.yml")
     def get(page_number, per_page_data):
         """ Return an hr key information based on his name """
         args = request.args
-        headers =  request.headers
-        # if request.headers.get('Authorization'):
-            # server.logger.info(headers.get('Authorization') )
-            # server.logger.info(JWT.decode(headers.get('Authorization').split()[1]) )
-            # server.logger.info(JWT.is_valid(headers.get('Authorization')) )
-            # try:
-            #     encoded_token = JWT.decode(headers.get('Authorization').split()[1])
-            #     res = jsonify({"data": {"logout":"true","valid_session_token":"true"}, "status": "success"})
-            #     return make_response(res, 200)
-            # except:
-            #     res = jsonify({"data": [], "status": "error", "message":"Invalid session token"})
-            #     return make_response(res, 401)
-        # server.logger.info("headers")
-        # server.logger.info(page_number)
+
+        # checking session token
+        headers = request.headers
+        if request.headers.get('Authorization') is None:
+            res = jsonify({"data": [], "status": "error", "message": "Require session token"})
+            return make_response(res, 401)
+        if JWT.is_valid(headers.get('Authorization')) is False:
+            res = jsonify({"data": [], "status": "error", "message": "Invalid session token"})
+            return make_response(res, 401)
+        # checking session token ends
+
         try:
             id = args['id']
             if id == "all":
                 hr = HRRepository.getAllIds(page_number, per_page_data)
                 return jsonify(hr)
             else:
-                 hr = HRRepository.getById(id=id)
-            res = jsonify({"data": hr.json, "status": "success"}) 
+                hr = HRRepository.getById(id=id)
+            res = jsonify({"data": hr.json, "status": "success"})
         except:
             res = jsonify(hr)
         return make_response(res, 200)
-
 
     @staticmethod
     @parse_params(
         Argument("first_name", location="json", required=True, help="The first_name of the hr."),
         Argument("last_name", location="json", required=True, help="The last_name of the hr."),
         Argument("email", location="json", required=True, help="The email of the hr."),
-        Argument("password", location="json",  required=True, help="The password of the hr."),
+        Argument("password", location="json", required=True, help="The password of the hr."),
         Argument("phone_no", location="json", required=True, help="The phone_no of the hr."),
-        Argument("alt_email", location="json",  help="The alt_email of the hr."),
-        Argument("alt_phone_no", location="json",  help="The alt_phone_no of the hr."),
-        Argument("department", location="json",  help="The department of the hr."),
-        Argument("designation", location="json",  help="The designation of the hr."),
-        Argument("profile_picture_url", location="json",  help="The profile_picture_url of the hr."),
-        Argument("country", location="json",  help="The country of the hr."),
-        Argument("state", location="json",  help="The state of the hr."),
-        Argument("city", location="json",  help="The city of the hr."),
-        Argument("address", location="json",  help="The address of the hr."),
-        Argument("created_date", location="json",  help="The created_date of the hr."),
-        Argument("last_updated_date", location="json",  help="The last_updated_date of the hr.")
+        Argument("alt_email", location="json", help="The alt_email of the hr."),
+        Argument("alt_phone_no", location="json", help="The alt_phone_no of the hr."),
+        Argument("department", location="json", help="The department of the hr."),
+        Argument("designation", location="json", help="The designation of the hr."),
+        Argument("profile_picture_url", location="json",
+                 help="The profile_picture_url of the hr."),
+        Argument("country", location="json", help="The country of the hr."),
+        Argument("state", location="json", help="The state of the hr."),
+        Argument("city", location="json", help="The city of the hr."),
+        Argument("address", location="json", help="The address of the hr."),
+        Argument("created_date", location="json", help="The created_date of the hr."),
+        Argument("last_updated_date", location="json", help="The last_updated_date of the hr.")
     )
     @swag_from("../swagger/hr/POST.yml")
     def post(last_name, first_name, email,
-     password,
-     alt_email,
-     alt_phone_no,
-     phone_no,
-     department,
-     designation,
-     profile_picture_url,
-     created_date,
-     last_updated_date,
-     country,
-     state,
-     city,
-     address):
+             password,
+             alt_email,
+             alt_phone_no,
+             phone_no,
+             department,
+             designation,
+             profile_picture_url,
+             created_date,
+             last_updated_date,
+             country,
+             state,
+             city,
+             address):
         """ Create an hr based on the sent information """
+        # checking session token
+        headers = request.headers
+        if request.headers.get('Authorization') is None:
+            res = jsonify({"data": [], "status": "error", "message": "Require session token"})
+            return make_response(res, 401)
+        if JWT.is_valid(headers.get('Authorization')) is False:
+            res = jsonify({"data": [], "status": "error", "message": "Invalid session token"})
+            return make_response(res, 401)
+        # checking session token ends
         # hash password
         password_hashed = Bcrypt.get_hashed_password(password)
         hr = HRRepository.create(
@@ -129,31 +149,29 @@ class HRResource(Resource):
         res = jsonify({"data": hr.json, "status": "success"})
         return make_response(res, 200)
 
-   
-
-
     @staticmethod
     @parse_params(
         Argument("id", location="json", required=True, help="Require id of the hr."),
-        Argument("first_name", location="json",  help="The first_name of the hr."),
-        Argument("last_name", location="json",  help="The last_name of the hr."),
-        Argument("email", location="json",  help="The email of the hr."),
-        Argument("password", location="json",   help="The password of the hr."),
-        Argument("phone_no", location="json",  help="The phone_no of the hr."),
-        Argument("alt_email", location="json",  help="The alt_email of the hr."),
-        Argument("alt_phone_no", location="json",  help="The alt_phone_no of the hr."),
-        Argument("department", location="json",  help="The department of the hr."),
-        Argument("designation", location="json",  help="The designation of the hr."),
-        Argument("profile_picture_url", location="json",  help="The profile_picture_url of the hr."),
-        Argument("country", location="json",  help="The country of the hr."),
-        Argument("state", location="json",  help="The state of the hr."),
-        Argument("city", location="json",  help="The city of the hr."),
-        Argument("address", location="json",  help="The address of the hr."),
-        Argument("created_date", location="json",  help="The created_date of the hr."),
-        Argument("last_updated_date", location="json",  help="The last_updated_date of the hr.")
+        Argument("first_name", location="json", help="The first_name of the hr."),
+        Argument("last_name", location="json", help="The last_name of the hr."),
+        Argument("email", location="json", help="The email of the hr."),
+        Argument("password", location="json", help="The password of the hr."),
+        Argument("phone_no", location="json", help="The phone_no of the hr."),
+        Argument("alt_email", location="json", help="The alt_email of the hr."),
+        Argument("alt_phone_no", location="json", help="The alt_phone_no of the hr."),
+        Argument("department", location="json", help="The department of the hr."),
+        Argument("designation", location="json", help="The designation of the hr."),
+        Argument("profile_picture_url", location="json",
+                 help="The profile_picture_url of the hr."),
+        Argument("country", location="json", help="The country of the hr."),
+        Argument("state", location="json", help="The state of the hr."),
+        Argument("city", location="json", help="The city of the hr."),
+        Argument("address", location="json", help="The address of the hr."),
+        Argument("created_date", location="json", help="The created_date of the hr."),
+        Argument("last_updated_date", location="json", help="The last_updated_date of the hr.")
     )
     @swag_from("../swagger/hr/PUT.yml")
-    def put(id, last_name,first_name, 
+    def put(id, last_name, first_name,
             email,
             password,
             alt_email,
@@ -169,6 +187,15 @@ class HRResource(Resource):
             created_date,
             last_updated_date):
         """ Update an hr based on the sent information """
+        # checking session token
+        headers = request.headers
+        if request.headers.get('Authorization') is None:
+            res = jsonify({"data": [], "status": "error", "message": "Require session token"})
+            return make_response(res, 401)
+        if JWT.is_valid(headers.get('Authorization')) is False:
+            res = jsonify({"data": [], "status": "error", "message": "Invalid session token"})
+            return make_response(res, 401)
+        # checking session token ends
          # hash password
         if password is not None:
             password = Bcrypt.get_hashed_password(password)
@@ -192,10 +219,11 @@ class HRResource(Resource):
             created_date=created_date,
             last_updated_date=last_updated_date)
         try:
-            res = jsonify({"data": hr.json, "status": "success"}) 
+            res = jsonify({"data": hr.json, "status": "success"})
         except:
-            res = jsonify({"hr": hr}) 
+            res = jsonify({"hr": hr})
         return make_response(res, 200)
+
 
 class HRResourceWithArg(Resource):
     """ Verbs relative to the hr """
@@ -207,27 +235,27 @@ class HRResourceWithArg(Resource):
         #  server.logger.info(json.dumps(hr))
         # server.logger.info(hr)
         try:
-            res = jsonify({"data": hr.json, "status": "success"}) 
+            res = jsonify({"data": hr.json, "status": "success"})
         except:
-            res = jsonify({"hr": hr}) 
+            res = jsonify({"hr": hr})
         return make_response(res, 200)
+
 
 class HRResourceLogin(Resource):
     """ Verbs relative to the hr login """
-    # login 
+    # login
     @staticmethod
     @parse_params(
         Argument("email", location="json", required=True, help="Require  email of the hr."),
-        Argument("password", location="json",  required=True, help="Require password of the hr."),
+        Argument("password", location="json", required=True, help="Require password of the hr."),
     )
     @swag_from("../swagger/hr/POST.yml")
-    def post( 
-        email,
-        password):
+    def post(
+            email,
+            password):
         """ create session token """
         # server.logger.info("login")
-       
-        
+
         hr = HRRepository.getByEmail(
             email=email
         )
@@ -235,21 +263,22 @@ class HRResourceLogin(Resource):
         if hr is not None:
             # hash password
             password_hashed = Bcrypt.get_hashed_password(password)
-            valid_password = Bcrypt.check_password(password,hr.password)
+            valid_password = Bcrypt.check_password(password, hr.password)
             # server.logger.info(valid_password)
             if valid_password:
-                payload = {"email":hr.email, "createdAt":int(time.time() * 1000)}
+                payload = {"email": hr.email, "createdAt": int(time.time() * 1000)}
                 session_token = JWT.encode(payload)
-                session_token = str(session_token)[1:].replace("'","")
+                session_token = str(session_token)[1:].replace("'", "")
                 # server.logger.info(session_token)
-                res = jsonify({"data": {"session_token":str(session_token)}, "status": "success"})
+                res = jsonify({"data": {"session_token": str(session_token)}, "status": "success"})
                 return make_response(res, 200)
             else:
-                res = jsonify({"data": [], "status": "error", "message":"incorrect password"})
+                res = jsonify({"data": [], "status": "error", "message": "incorrect password"})
                 return make_response(res, 401)
         else:
-            res = jsonify({"data": [], "status": "error", "message":"incorrect email"})
+            res = jsonify({"data": [], "status": "error", "message": "incorrect email"})
             return make_response(res, 401)
+
 
 class HRResourceLogout(Resource):
     """ Verbs relative to the hr logout """
@@ -259,17 +288,62 @@ class HRResourceLogout(Resource):
     def post():
         """ Destroy session token """
         # server.logger.info("logout")
-        headers =  request.headers
+        headers = request.headers
         if request.headers.get('Authorization'):
             # server.logger.info(headers.get('Authorization') )
             # server.logger.info(JWT.decode(headers.get('Authorization').split()[1]) )
             try:
                 encoded_token = JWT.decode(headers.get('Authorization').split()[1])
-                res = jsonify({"data": {"logout":"true","valid_session_token":"true"}, "status": "success"})
+                res = jsonify(
+                    {"data": {"logout": "true", "valid_session_token": "true"}, "status": "success"})
                 return make_response(res, 200)
             except:
-                res = jsonify({"data": [], "status": "error", "message":"Invalid session token"})
+                res = jsonify({"data": [], "status": "error", "message": "Invalid session token"})
                 return make_response(res, 401)
         else:
-            res = jsonify({"data": [], "status": "error", "message":"No Authorization session token"})
+            res = jsonify({"data": [], "status": "error",
+                           "message": "No Authorization session token"})
             return make_response(res, 401)
+
+
+def create_new_folder(local_dir):
+    newpath = local_dir
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+    return newpath
+
+
+class HRResourceUploadFile(Resource):
+    """ Verbs relative to the upload """
+    # upload file
+    @staticmethod
+    @swag_from("../swagger/hr/POST.yml")
+    def post():
+        """ upload image """
+        # checking session token
+        headers = request.headers
+        if request.headers.get('Authorization') is None:
+            res = jsonify({"data": [], "status": "error", "message": "Require session token"})
+            return make_response(res, 401)
+        if JWT.is_valid(headers.get('Authorization')) is False:
+            res = jsonify({"data": [], "status": "error", "message": "Invalid session token"})
+            return make_response(res, 401)
+        # checking session token ends
+        # checking if the file is present or not.
+        if 'file' not in request.files:
+            res = jsonify({"data": [], "status": "error", "message": "No file found"})
+            return make_response(res, 404)
+        try:    
+            app_root = '..' + os.path.dirname(os.path.abspath(__file__))
+            target =  os.path.join(app_root, '../../static/img')
+            if not os.path.isdir(target):
+                os.makedirs(target)
+            img = request.files['file']
+            img_name = secure_filename(img.filename)
+            destination = '/'.join([target, img_name])
+            img.save(destination)
+            res = jsonify({"data": {"message" : "file Successfully uploaded"}, "status": "success"})
+            return make_response(res, 200)
+        except Exception as e:
+            res = jsonify({"data": [], "status": "error", "message": e })
+            return make_response(res, 404)
