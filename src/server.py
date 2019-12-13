@@ -31,7 +31,7 @@ CORS(server)
 def list_files():
     """Endpoint to list files on the server."""
     files = []
-    STATIC_IMG_DIRECTORY = "./static/img/"
+    STATIC_IMG_DIRECTORY = "static/img/"
     for filename in os.listdir(STATIC_IMG_DIRECTORY):
         path = os.path.join(STATIC_IMG_DIRECTORY, filename)
         if os.path.isfile(path):
