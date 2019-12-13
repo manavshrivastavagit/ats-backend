@@ -6,6 +6,17 @@ import config
 import routes
 from models import db
 from flask_cors import CORS
+import os
+
+from flask import Flask, request, abort, jsonify, send_from_directory,send_file
+
+
+UPLOAD_DIRECTORY = "../static/img/"
+
+if not os.path.exists(UPLOAD_DIRECTORY):
+    os.makedirs(UPLOAD_DIRECTORY)
+
+
 
 # config your API specs
 # you can define multiple specs in the case your api has multiple versions
@@ -15,6 +26,28 @@ from flask_cors import CORS
 
 server = Flask(__name__)
 CORS(server)
+
+@server.route("/static/img")
+def list_files():
+    """Endpoint to list files on the server."""
+    files = []
+    STATIC_IMG_DIRECTORY = "./static/img/"
+    for filename in os.listdir(STATIC_IMG_DIRECTORY):
+        path = os.path.join(STATIC_IMG_DIRECTORY, filename)
+        if os.path.isfile(path):
+            files.append(filename)
+    return jsonify(files)
+
+@server.route("/download/<path:path>")
+def get_file(path):
+    """Download a file."""
+    DOWNLOAD_DIRECTORY = "../static/img/"
+    return send_from_directory(DOWNLOAD_DIRECTORY, path, as_attachment=True)
+
+@server.route("/static/img/<path:path>")
+def getfile(path):
+    """Download a file."""
+    return send_file( "../static/img/"+ path, mimetype='image/jpeg')
 
 server.config["SWAGGER"] = {
     "swagger_version": "2.0",
