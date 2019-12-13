@@ -8,14 +8,17 @@ from models import db
 from flask_cors import CORS
 import os
 
-from flask import Flask, request, abort, jsonify, send_from_directory,send_file
+from flask import Flask, request, abort, jsonify, send_from_directory, send_file
+
+from threading import Thread
+from flask_mail import Message, Mail
+
 
 
 UPLOAD_DIRECTORY = "../static/img/"
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
-
 
 
 # config your API specs
@@ -26,6 +29,9 @@ if not os.path.exists(UPLOAD_DIRECTORY):
 
 server = Flask(__name__)
 CORS(server)
+server.config.from_pyfile('flask.cfg')
+mail = Mail(server)
+
 
 @server.route("/static/img")
 def list_files():
@@ -38,16 +44,42 @@ def list_files():
             files.append(filename)
     return jsonify(files)
 
+
 @server.route("/download/<path:path>")
 def get_file(path):
     """Download a file."""
     DOWNLOAD_DIRECTORY = "../static/img/"
     return send_from_directory(DOWNLOAD_DIRECTORY, path, as_attachment=True)
 
+
 @server.route("/static/img/<path:path>")
 def getfile(path):
     """Download a file."""
-    return send_file( "../static/img/"+ path, mimetype='image/jpeg')
+    return send_file("../static/img/" + path, mimetype='image/jpeg')
+
+def send_async_email(msg):
+    with server.app_context():
+        mail.send(msg)
+ 
+
+def send_email(subject, recipients, text_body, html_body):
+    msg = Message(subject, recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    thr = Thread(target=send_async_email, args=[msg])
+    thr.start()
+
+@server.route("/send_email")
+def sendEmail():
+    """email sender"""
+    send_email('Registration',
+                           ['manavshrivastava@hotmail.com'],
+                           'Thanks for registering with Kennedy Family Recipes!',
+                           '<h3>Thanks for registering with Kennedy Family Recipes!</h3>')
+    return "email sent to manavshrivastava@hotmail.com"
+
+
+
 
 server.config["SWAGGER"] = {
     "swagger_version": "2.0",
