@@ -72,10 +72,10 @@ def send_email(subject, recipients, text_body, html_body):
 @server.route("/send_email")
 def sendEmail():
     """email sender"""
-    send_email('Registration',
+    send_email('Registration ATS',
                            ['manavshrivastava@hotmail.com'],
-                           'Thanks for registering with Kennedy Family Recipes!',
-                           '<h3>Thanks for registering with Kennedy Family Recipes!</h3>')
+                           'Thanks for registering ATS!',
+                           '<h3>Thanks for registering with ATS!</h3>')
     return "email sent to manavshrivastava@hotmail.com"
 
 
