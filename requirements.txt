@@ -19,4 +19,8 @@ flask-cors
 py-bcrypt
 pyjwt
 flask_mail
-app
+google-api-python-client 
+oauth2client
+httplib2
+google-auth-httplib2
+google-auth-oauthlib

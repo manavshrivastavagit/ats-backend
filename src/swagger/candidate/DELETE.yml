@@ -1,0 +1,26 @@
+Create an candidate based on the sent information
+---
+tags:
+  - candidate
+parameters:
+  - name: id
+    in: query
+    type: string
+    description: id
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the candidate
+responses:
+  200:
+    description: The candidate was successfully deleted
+    schema:
+      example:
+        candidate:
+          last_name: Doe
+          first_name: John
+          id: 30

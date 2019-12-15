@@ -1,0 +1,30 @@
+Create an interview based on the sent information
+---
+tags:
+  - interview
+parameters:
+  - in: formData
+    name: upfile
+    type: file
+    description: The file to upload.
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: the last name of the interview
+        last_name:
+          type: string
+          description: the last name of the interview
+
+responses:
+  200:
+    description: The interview was successfully created
+    schema:
+      example:
+        interview:
+          last_name: Doe
+          first_name: John
+          # age: 30

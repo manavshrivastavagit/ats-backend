@@ -1,0 +1,26 @@
+Create an interviewer based on the sent information
+---
+tags:
+  - interviewer
+parameters:
+  - name: id
+    in: query
+    type: string
+    description: id
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the interviewer
+responses:
+  200:
+    description: The interviewer was successfully deleted
+    schema:
+      example:
+        interviewer:
+          last_name: Doe
+          first_name: John
+          id: 30

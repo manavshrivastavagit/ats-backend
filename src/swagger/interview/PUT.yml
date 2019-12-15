@@ -1,0 +1,25 @@
+Update an interview based on the sent information
+---
+tags:
+  - interview
+parameters:
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the interview
+        first_name:
+          type: string
+          description: The first_name of the interview
+responses:
+  200:
+    description: The interview was successfully updated
+    schema:
+      example:
+        interview:
+          last_name: Doe
+          first_name: John
+          # age: 30

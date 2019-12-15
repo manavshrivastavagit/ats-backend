@@ -1,0 +1,31 @@
+Return an candidate key information based on his name
+---
+tags:
+  - candidate
+parameters:
+  - name: last_name
+    in: path
+    type: string
+    description: the last name of the candidate
+  - name: first_name
+    in: path
+    type: string
+    description: the last name of the candidate
+  - name: page_number
+    in: query
+    type: string
+    description: page_number
+  - name: per_page_data
+    in: query
+    type: string
+    description: per_page_data
+  
+responses:
+  200:
+    description: The candidate's information were successfully retrieved
+    schema:
+      example:
+        candidate:
+          last_name: Doe
+          first_name: John
+          # age: 30

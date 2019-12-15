@@ -1,0 +1,30 @@
+Create an candidate based on the sent information
+---
+tags:
+  - candidate
+parameters:
+  - in: formData
+    name: upfile
+    type: file
+    description: The file to upload.
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: the last name of the candidate
+        last_name:
+          type: string
+          description: the last name of the candidate
+
+responses:
+  200:
+    description: The candidate was successfully created
+    schema:
+      example:
+        candidate:
+          last_name: Doe
+          first_name: John
+          # age: 30

@@ -1,0 +1,26 @@
+Create an interview based on the sent information
+---
+tags:
+  - interview
+parameters:
+  - name: id
+    in: query
+    type: string
+    description: id
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the interview
+responses:
+  200:
+    description: The interview was successfully deleted
+    schema:
+      example:
+        interview:
+          last_name: Doe
+          first_name: John
+          id: 30

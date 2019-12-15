@@ -1,0 +1,25 @@
+Update an candidate based on the sent information
+---
+tags:
+  - candidate
+parameters:
+  - name: body
+    in: body
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the candidate
+        first_name:
+          type: string
+          description: The first_name of the candidate
+responses:
+  200:
+    description: The candidate was successfully updated
+    schema:
+      example:
+        candidate:
+          last_name: Doe
+          first_name: John
+          # age: 30

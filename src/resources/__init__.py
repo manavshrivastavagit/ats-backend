@@ -1,2 +1,5 @@
 from .user import UserResource
 from .hr import HRResourceWithArg, HRResource,HRResourceLogin,HRResourceLogout,HRResourceUploadFile
+from .interviewer import interviewerResourceWithArg, interviewerResource,interviewerResourceLogin,interviewerResourceLogout,interviewerResourceUploadFile
+from .candidate import candidateResourceWithArg, candidateResource,candidateResourceLogin,candidateResourceLogout,candidateResourceUploadFile
+from .interview import interviewResourceWithArg, interviewResource,interviewResourceLogin,interviewResourceLogout,interviewResourceUploadFile
