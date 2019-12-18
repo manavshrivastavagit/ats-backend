@@ -1,6 +1,6 @@
 """ Defines the interviewRounds repository """
 
-from models import interviewRounds
+from models import interview_rounds
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask.json import jsonify
 from models import db
